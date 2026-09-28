@@ -44,7 +44,10 @@ jobs:
                   tag_name: ${{ github.ref }}
                   name: ${{ github.ref_name }}
                   generate_release_notes: false
-                  body: See the [changelog](https://github.com/Vinzent03/obsidian-git/blob/master/CHANGELOG.md) for details.
+                  body: |
+                      中文界面分支。详情见 [更新日志](https://github.com/NAMEWTA/obsidian-git-zh/blob/wta/CHANGELOG.md)。
+
+                      Chinese UI fork. See the [changelog](https://github.com/NAMEWTA/obsidian-git-zh/blob/wta/CHANGELOG.md).
                   draft: false
                   prerelease: false
                   files: |

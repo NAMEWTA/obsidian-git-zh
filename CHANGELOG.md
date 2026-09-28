@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.40.0-zh1](https://github.com/NAMEWTA/obsidian-git-zh/releases/tag/2.40.0-zh1) (2026-09-28)
+
+中文界面分支，基于上游 [2.40.0](https://github.com/Vinzent03/obsidian-git/releases/tag/2.40.0)。
+
+### Features
+
+* 新增界面语言设置：默认 English，可在 **设置 → Git** 中切换为中文。视图、命令、设置项和提示会一起切换，选项保存在插件设置中。
+
 ## [2.40.0](https://github.com/Vinzent03/obsidian-git/compare/2.39.0...2.40.0) (2026-09-17)
 
 
