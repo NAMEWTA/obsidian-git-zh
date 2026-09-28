@@ -1,4 +1,5 @@
 import { Notice, Platform, TFile } from "obsidian";
+import { t } from "src/i18n";
 import {
     DIFF_VIEW_CONFIG,
     READ_ONLY_FILE_VIEW_CONFIG,
@@ -63,11 +64,14 @@ export default class Tools {
 
             if (tooBigFiles.length > 0) {
                 this.plugin.displayError(
-                    `Aborted commit, because the following files are too big:\n- ${tooBigFiles
-                        .map((e) => e.vaultPath)
-                        .join(
-                            "\n- "
-                        )}\nPlease remove them or add to .gitignore.`
+                    t(
+                        "Aborted commit, because the following files are too big:\n- {files}\nPlease remove them or add to .gitignore.",
+                        {
+                            files: tooBigFiles
+                                .map((e) => e.vaultPath)
+                                .join("\n- "),
+                        }
+                    )
                 );
 
                 return true;
@@ -130,14 +134,17 @@ export default class Tools {
             return;
         }
         const modal = new GeneralModal(this.plugin, {
-            placeholder: "push origin master",
+            placeholder: t("push origin master"),
             allowEmpty: false,
         });
         const command = await modal.openAndGetResult();
         if (command === undefined) return;
 
         this.plugin.promiseQueue.addTask(async () => {
-            const notice = new Notice(`Running '${command}'...`, 999_999);
+            const notice = new Notice(
+                t("Running '{command}'...", { command }),
+                999_999
+            );
 
             try {
                 const res = await gitManager.rawCommand(command);

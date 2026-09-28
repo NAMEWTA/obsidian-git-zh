@@ -1,6 +1,7 @@
 import type { Debouncer, ViewStateResult, WorkspaceLeaf } from "obsidian";
 import { debounce, ItemView, Platform, setIcon } from "obsidian";
 import { DEFAULT_SETTINGS, SPLIT_DIFF_VIEW_CONFIG } from "src/constants";
+import { t } from "src/i18n";
 import { SimpleGit } from "src/gitManager/simpleGit";
 import type ObsidianGit from "src/main";
 import type { DiffViewState } from "src/types";
@@ -153,16 +154,16 @@ export default class SplitDiffView extends ItemView {
             if (fileName?.endsWith(".md")) fileName = fileName.slice(0, -3);
             let suffix: string;
             if (this.state.bRef == undefined) {
-                suffix = " (Working Tree)";
+                suffix = t(" (Working Tree)");
             } else if (this.state.bRef == "") {
-                suffix = " (Index)";
+                suffix = t(" (Index)");
             } else {
                 suffix = "(" + this.state.bRef.substring(0, 7) + ")";
             }
 
-            return `Diff: ${fileName} ${suffix}`;
+            return t("Diff: {file} {suffix}", { file: fileName, suffix });
         }
-        return SPLIT_DIFF_VIEW_CONFIG.name;
+        return t("Diff view");
     }
 
     getIcon(): string {
@@ -303,7 +304,7 @@ export default class SplitDiffView extends ItemView {
         stageButton.addClass("clickable-icon");
         stageButton.setAttr(
             "aria-label",
-            this.state.bRef == undefined ? "Stage hunk" : "Unstage hunk"
+            this.state.bRef == undefined ? t("Stage hunk") : t("Unstage hunk")
         );
         setIcon(stageButton, this.state.bRef == undefined ? "plus" : "minus");
 
@@ -341,7 +342,7 @@ export default class SplitDiffView extends ItemView {
         if (this.state.bRef == undefined) {
             const resetButton = contentEl.createDiv();
             resetButton.addClass("clickable-icon");
-            resetButton.setAttr("aria-label", "Reset hunk");
+            resetButton.setAttr("aria-label", t("Reset hunk"));
             setIcon(resetButton, "undo");
             resetButton.onmousedown = (_) => {
                 const source = this.mergeView!.a;

@@ -2,6 +2,7 @@ import type { Editor, MarkdownView, Menu } from "obsidian";
 import { DEFAULT_SETTINGS } from "src/constants";
 import type { LineAuthorSettings } from "src/editor/lineAuthor/model";
 import { findGutterElementUnderMouse } from "src/editor/lineAuthor/view/gutter/gutterElementSearch";
+import { t } from "src/i18n";
 import { pluginRef } from "src/pluginGlobalRef";
 import type { BlameCommit } from "src/types";
 import { impossibleBranch } from "src/utils";
@@ -43,7 +44,7 @@ export function handleContextMenu(
 function addCopyHashMenuItem(commit: CtxMenuCommitInfo, menu: Menu) {
     menu.addItem((item) =>
         item
-            .setTitle("Copy commit hash")
+            .setTitle(t("Copy commit hash"))
             .setIcon("copy")
             .setSection("obs-git-line-author-copy")
             .onClick((_e) => navigator.clipboard.writeText(commit.hash))
@@ -67,17 +68,20 @@ function addConfigurableLineAuthorSettings(
     const defaultValue = DEFAULT_SETTINGS.lineAuthor[key];
 
     if (key === "showCommitHash") {
-        title = "Show commit hash";
+        title = t("Show commit hash");
         actionNewValue = currentValue;
     } else if (key === "authorDisplay") {
         const showOption = settings.lastShownAuthorDisplay ?? defaultValue;
-        title = "Show author " + (currentlyShown ? currentValue : showOption);
+        const option = String(currentlyShown ? currentValue : showOption);
+        title = t("Show author {option}", { option: t(option) });
         actionNewValue = currentlyShown ? "hide" : showOption;
     } else if (key === "dateTimeFormatOptions") {
         const showOption =
             settings.lastShownDateTimeFormatOptions ?? defaultValue;
-        title = "Show " + (currentlyShown ? currentValue : showOption);
-        title += !title.contains("date") ? " date" : "";
+        const option = String(currentlyShown ? currentValue : showOption);
+        title = option.includes("date")
+            ? t("Show {option}", { option: t(option) })
+            : t("Show {option} date", { option: t(option) });
         actionNewValue = currentlyShown ? "hide" : showOption;
     } else {
         impossibleBranch(key);

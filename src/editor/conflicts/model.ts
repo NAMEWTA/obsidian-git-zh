@@ -1,3 +1,5 @@
+import { t } from "src/i18n";
+
 export type ConflictChoice = "ours" | "theirs" | "base" | "both";
 
 export interface ConflictMarker {
@@ -136,7 +138,9 @@ export function resolveBlockText(
             return block.theirs;
         case "base":
             if (block.base === undefined) {
-                throw new Error("Cannot keep the base of a two-way conflict");
+                throw new Error(
+                    t("Cannot keep the base of a two-way conflict")
+                );
             }
             return block.base;
         case "both":

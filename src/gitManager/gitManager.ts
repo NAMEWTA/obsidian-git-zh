@@ -1,5 +1,6 @@
 import { hostname as osHostname } from "os";
 import { type App, moment, Platform } from "obsidian";
+import { t } from "src/i18n";
 import type ObsidianGit from "../main";
 import { GitOperation } from "../types";
 import type {
@@ -340,7 +341,7 @@ export abstract class GitManager {
 
                 files = chunks.join(", ");
             } else {
-                files = "Too many files to list";
+                files = t("Too many files to list");
             }
 
             template = template.replace("{{files}}", files);
@@ -357,9 +358,9 @@ export abstract class GitManager {
             if (status2.staged.length < 100) {
                 files = status2.staged.map((e) => e.path).join("\n");
             } else {
-                files = "Too many files to list";
+                files = t("Too many files to list");
             }
-            template = template + "\n\n" + "Affected files:" + "\n" + files;
+            template = template + "\n\n" + t("Affected files:") + "\n" + files;
         }
         return template;
     }

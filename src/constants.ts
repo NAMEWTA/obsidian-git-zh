@@ -7,6 +7,7 @@ export const DATE_TIME_FORMAT_SECONDS = `${DATE_FORMAT} HH:mm:ss`;
 export const GIT_LINE_AUTHORING_MOVEMENT_DETECTION_MINIMAL_LENGTH = 40;
 
 export const DEFAULT_SETTINGS: ObsidianGitSettings = {
+    pluginLanguage: "en",
     commitMessage: "vault backup: {{date}}",
     autoCommitMessage: "vault backup: {{date}}",
     commitMessageScript: "",

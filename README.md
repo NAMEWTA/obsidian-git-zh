@@ -8,6 +8,12 @@ All setup instructions (including mobile), common issues, tips, and advanced con
 
 > Mobile users: The plugin is **highly unstable ⚠️ !** Please check the dedicated [Mobile](#-mobile-support-%EF%B8%8F--experimental) section below.
 
+## Language / 语言
+
+The plugin UI is English by default. Open **Settings → Git** and change **Language** to **中文** to switch views, commands, settings, and notices. Choose **English** to switch back. The choice is saved in the plugin settings.
+
+插件界面默认英文。在 **设置 → Git** 里把 **Language / 语言** 改为 **中文** 后，视图、命令、设置项和提示都会切换；再选回 **English** 即可。该选项保存在插件设置中。
+
 ## Key Features
 
 - 🔁 **Automatic commit-and-sync** (commit, pull, and push) on a schedule.

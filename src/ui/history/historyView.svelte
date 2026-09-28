@@ -1,6 +1,7 @@
 <script lang="ts">
     import { setIcon } from "obsidian";
     import { SimpleGit } from "src/gitManager/simpleGit";
+    import { t } from "src/i18n";
     import type ObsidianGit from "src/main";
     import type { LogEntry } from "src/types";
     import { onMount } from "svelte";
@@ -107,7 +108,7 @@
                 id="layoutChange"
                 class="clickable-icon nav-action-button"
                 data-icon={showTree ? "list" : "folder"}
-                aria-label="Change Layout"
+                aria-label={t("Change Layout")}
                 bind:this={buttons[0]}
                 onclick={() => {
                     showTree = !showTree;
@@ -121,7 +122,7 @@
                 class="clickable-icon nav-action-button"
                 class:loading
                 data-icon="refresh-cw"
-                aria-label="Refresh"
+                aria-label={t("Refresh")}
                 bind:this={buttons[1]}
                 onclick={triggerRefresh}
             ></div>

@@ -2,6 +2,7 @@ import * as cssColorConverter from "css-color-converter";
 import { spawn, type SpawnOptionsWithoutStdio } from "child_process";
 import type { App, ItemView, RGB, WorkspaceLeaf } from "obsidian";
 import { Keymap, Menu, moment, TFile } from "obsidian";
+import { t } from "src/i18n";
 import { BINARY_EXTENSIONS } from "./constants";
 
 type WorkspaceRootWithSide = {
@@ -15,13 +16,10 @@ export function assertNever(x: never): never {
 export function plural(
     count: number,
     singular: string,
-    plural?: string
+    pluralForm?: string
 ): string {
-    if (count === 1) {
-        return `${count} ${singular}`;
-    } else {
-        return `${count} ${plural ?? singular + "s"}`;
-    }
+    const noun = count === 1 ? singular : pluralForm ?? singular + "s";
+    return t("{count} {noun}", { count, noun: t(noun) });
 }
 
 export const worthWalking = (filepath: string, root?: string) => {

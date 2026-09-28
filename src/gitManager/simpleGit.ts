@@ -14,6 +14,7 @@ import {
     GIT_LINE_AUTHORING_MOVEMENT_DETECTION_MINIMAL_LENGTH,
 } from "src/constants";
 import type { LineAuthorFollowMovement } from "src/editor/lineAuthor/model";
+import { t } from "src/i18n";
 import { GeneralModal } from "src/ui/modals/generalModal";
 import type ObsidianGit from "../main";
 import type {
@@ -56,7 +57,7 @@ export class SimpleGit extends GitManager {
                         this.plugin.settings.basePath
                     );
                 } else if (!ignoreError) {
-                    new Notice("ObsidianGit: Base path does not exist");
+                    new Notice(t("ObsidianGit: Base path does not exist"));
                 }
             }
             this.absoluteRepoPath = basePath;
@@ -298,7 +299,7 @@ export class SimpleGit extends GitManager {
                     obscure,
                     placeholder:
                         data.length > 60
-                            ? "Enter a response to the message."
+                            ? t("Enter a response to the message.")
                             : data,
                 }).openAndGetResult();
                 notice?.hide();
@@ -695,7 +696,7 @@ export class SimpleGit extends GitManager {
                 const branchInfo = await this.branchInfo();
                 if (!branchInfo.current) {
                     this.plugin.displayError(
-                        "No current branch found. Cannot pull."
+                        t("No current branch found. Cannot pull.")
                     );
                     return undefined;
                 }
@@ -753,7 +754,10 @@ export class SimpleGit extends GitManager {
                             }
                         } catch (err) {
                             this.plugin.displayError(
-                                `Pull failed (${this.plugin.settings.syncMethod}): ${errorToString(err)}`
+                                t("Pull failed ({method}): {error}", {
+                                    method: this.plugin.settings.syncMethod,
+                                    error: errorToString(err),
+                                })
                             );
                             return;
                         }
@@ -767,7 +771,10 @@ export class SimpleGit extends GitManager {
                             await this.git.reset([]);
                         } catch (err) {
                             this.plugin.displayError(
-                                `Sync failed (${this.plugin.settings.syncMethod}): ${errorToString(err)}`
+                                t("Sync failed ({method}): {error}", {
+                                    method: this.plugin.settings.syncMethod,
+                                    error: errorToString(err),
+                                })
                             );
                         }
                     }
@@ -819,7 +826,7 @@ export class SimpleGit extends GitManager {
 
                 if (!currentBranch) {
                     this.plugin.displayError(
-                        "No current branch found. Cannot push."
+                        t("No current branch found. Cannot push.")
                     );
                     return undefined;
                 }
@@ -1483,7 +1490,9 @@ export class SimpleGit extends GitManager {
             const errorMessage =
                 error instanceof Error ? error.message : String(error);
             this.plugin.displayError(
-                `Error checking LFS status: ${errorMessage}`
+                t("Error checking LFS status: {error}", {
+                    error: errorMessage,
+                })
             );
             return false;
         }

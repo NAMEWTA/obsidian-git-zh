@@ -14,6 +14,7 @@ import git, { Errors, readBlob } from "isomorphic-git";
 import { GitIndexManager } from "isomorphic-git/managers";
 import { FileSystem } from "isomorphic-git/models";
 import { normalizePath, Notice, requestUrl } from "obsidian";
+import { t } from "src/i18n";
 import type ObsidianGit from "../main";
 import type {
     BranchInfo,
@@ -89,15 +90,18 @@ export class IsomorphicGit extends GitManager {
             },
             onAuthFailure: async () => {
                 new Notice(
-                    "Authentication failed. Please try with different credentials"
+                    t(
+                        "Authentication failed. Please try with different credentials"
+                    )
                 );
                 const username = await new GeneralModal(this.plugin, {
-                    placeholder: "Specify your username",
+                    placeholder: t("Specify your username"),
                 }).openAndGetResult();
                 if (username) {
                     const password = await new GeneralModal(this.plugin, {
-                        placeholder:
-                            "Specify your password/personal access token",
+                        placeholder: t(
+                            "Specify your password/personal access token"
+                        ),
                         obscure: true,
                     }).openAndGetResult();
                     if (password) {
@@ -178,7 +182,7 @@ export class IsomorphicGit extends GitManager {
         let notice: Notice | undefined;
         const timeout = window.setTimeout(() => {
             notice = new Notice(
-                "This takes longer: Getting status",
+                t("This takes longer: Getting status"),
                 this.noticeLength
             );
         }, 20000);
@@ -497,17 +501,45 @@ export class IsomorphicGit extends GitManager {
     }
 
     getProgressText(action: string, event: GitProgressEvent): string {
-        let out = `${action} progress:`;
+        const actionLabel = t(action);
         if (event.phase) {
-            out = `${out} ${event.phase}:`;
+            if (event.loaded) {
+                if (event.total) {
+                    return t(
+                        "{action} progress: {phase}: {loaded} of {total}",
+                        {
+                            action: actionLabel,
+                            phase: event.phase,
+                            loaded: event.loaded,
+                            total: event.total,
+                        }
+                    );
+                }
+                return t("{action} progress: {phase}: {loaded}", {
+                    action: actionLabel,
+                    phase: event.phase,
+                    loaded: event.loaded,
+                });
+            }
+            return t("{action} progress: {phase}:", {
+                action: actionLabel,
+                phase: event.phase,
+            });
         }
         if (event.loaded) {
-            out = `${out} ${event.loaded}`;
             if (event.total) {
-                out = `${out} of ${event.total}`;
+                return t("{action} progress: {loaded} of {total}", {
+                    action: actionLabel,
+                    loaded: event.loaded,
+                    total: event.total,
+                });
             }
+            return t("{action} progress: {loaded}", {
+                action: actionLabel,
+                loaded: event.loaded,
+            });
         }
-        return out;
+        return t("{action} progress:", { action: actionLabel });
     }
 
     resolveRef(ref: string): Promise<string> {
@@ -515,7 +547,7 @@ export class IsomorphicGit extends GitManager {
     }
 
     async pull(): Promise<FileStatusResult[] | undefined> {
-        const progressNotice = this.showNotice("Initializing pull");
+        const progressNotice = this.showNotice(t("Initializing pull"));
         return this.withGitOperation(GitOperation.pull, async () => {
             let mergeState:
                 | { ours: string; theirs: string; message: string }
@@ -523,14 +555,16 @@ export class IsomorphicGit extends GitManager {
             try {
                 if (await this.isMergeInProgress()) {
                     throw new Error(
-                        "Cannot pull because a merge is still in progress. Commit or abort it first."
+                        t(
+                            "Cannot pull because a merge is still in progress. Commit or abort it first."
+                        )
                     );
                 }
                 const branchInfo = await this.branchInfo();
                 if (!branchInfo.current) {
                     progressNotice?.hide();
                     this.plugin.displayError(
-                        "No current branch found. Cannot pull."
+                        t("No current branch found. Cannot pull.")
                     );
                     return undefined;
                 }
@@ -627,7 +661,7 @@ export class IsomorphicGit extends GitManager {
                     upstreamCommit
                 );
 
-                this.showNotice("Finished pull", false);
+                this.showNotice(t("Finished pull"), false);
 
                 return changedFiles.map<FileStatusResult>((file) => ({
                     path: file.path,
@@ -651,7 +685,7 @@ export class IsomorphicGit extends GitManager {
     }
 
     async push(): Promise<number | undefined> {
-        const progressNotice = this.showNotice("Initializing push");
+        const progressNotice = this.showNotice(t("Initializing push"));
         return this.withGitOperation(GitOperation.push, async () => {
             try {
                 const status = await this.branchInfo();
@@ -660,7 +694,7 @@ export class IsomorphicGit extends GitManager {
                 if (!currentBranch) {
                     progressNotice?.hide();
                     this.plugin.displayError(
-                        "No current branch found. Cannot push."
+                        t("No current branch found. Cannot push.")
                     );
                     return undefined;
                 }
@@ -841,7 +875,7 @@ export class IsomorphicGit extends GitManager {
     }
 
     async clone(url: string, dir: string, depth?: number): Promise<void> {
-        const progressNotice = this.showNotice("Initializing clone");
+        const progressNotice = this.showNotice(t("Initializing clone"));
         try {
             await this.wrapFS(
                 git.clone({
@@ -899,7 +933,7 @@ export class IsomorphicGit extends GitManager {
     }
 
     async fetch(remote?: string): Promise<void> {
-        const progressNotice = this.showNotice("Initializing fetch");
+        const progressNotice = this.showNotice(t("Initializing fetch"));
 
         try {
             const args = {
@@ -1045,7 +1079,7 @@ export class IsomorphicGit extends GitManager {
             !conflicted.every((path: unknown) => typeof path === "string")
         ) {
             throw new TypeError(
-                "isomorphic-git returned invalid unmerged paths"
+                t("isomorphic-git returned invalid unmerged paths")
             );
         }
         return conflicted;
@@ -1247,7 +1281,7 @@ export class IsomorphicGit extends GitManager {
         let notice: Notice | undefined;
         const timeout = window.setTimeout(() => {
             notice = new Notice(
-                "This takes longer: Getting status",
+                t("This takes longer: Getting status"),
                 this.noticeLength
             );
         }, 20000);
@@ -1484,7 +1518,9 @@ export class IsomorphicGit extends GitManager {
         const statusKey = `${row[this.HEAD]}${row[this.WORKDIR]}${row[this.STAGE]}`;
         const status = this.status_mapping[statusKey];
         if (status === undefined) {
-            throw new Error(`Unsupported status matrix row: ${statusKey}`);
+            throw new Error(
+                t("Unsupported status matrix row: {statusKey}", { statusKey })
+            );
         }
         // status will always be two characters
         return {
@@ -1500,7 +1536,9 @@ export class IsomorphicGit extends GitManager {
         const email = await this.getConfig("user.email");
         if (!name || !email) {
             throw Error(
-                "Git author name and email are not set. Please set both fields in the settings."
+                t(
+                    "Git author name and email are not set. Please set both fields in the settings."
+                )
             );
         }
     }
@@ -1528,7 +1566,9 @@ type TypedWalkOptions<T> = Omit<Parameters<typeof git.walk>[0], "map"> & {
 async function typedWalk<T>(options: TypedWalkOptions<T>): Promise<T[]> {
     const result: unknown = await git.walk(options);
     if (!Array.isArray(result)) {
-        throw new TypeError("isomorphic-git walk returned a non-array result");
+        throw new TypeError(
+            t("isomorphic-git walk returned a non-array result")
+        );
     }
     return result as T[];
 }

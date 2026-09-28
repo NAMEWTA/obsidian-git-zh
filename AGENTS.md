@@ -60,6 +60,11 @@ to bundling, dependencies, manifest/release behavior, or runtime imports.
 
 ## Source and implementation conventions
 
+-   User-facing text goes through `t()` from `src/i18n`. English is the source
+    string and the default locale. Add the same key to `src/i18n/zh.ts` when
+    you add or change a `t()` literal. Do not translate command IDs, persisted
+    setting values, Git CLI arguments, or commit-message tokens such as
+    `{{date}}`. `tests/i18n.test.ts` fails when a literal has no Chinese entry.
 -   Use the existing double-quote and Prettier formatting style. Do not make
     unrelated formatting changes.
 -   Keep command IDs stable after release. Add or change commands in

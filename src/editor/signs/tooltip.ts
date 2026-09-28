@@ -10,6 +10,7 @@ import { Hunks, type Hunk } from "./hunks";
 import { html } from "diff2html";
 import { ColorSchemeType } from "diff2html/lib/types";
 import { pluginRef } from "src/pluginGlobalRef";
+import { t } from "src/i18n";
 import { editorEditorField, MarkdownView, setIcon } from "obsidian";
 
 const selectHunkEffectType = StateEffect.define<{
@@ -143,9 +144,9 @@ function createTooltip(
         return btn;
     };
 
-    const closeBtn = makeButton("x", "Close hunk");
-    const stageBtn = makeButton("plus", "Stage hunk");
-    const resetBtn = makeButton("undo", "Reset hunk");
+    const closeBtn = makeButton("x", t("Close hunk"));
+    const stageBtn = makeButton("plus", t("Stage hunk"));
+    const resetBtn = makeButton("undo", t("Reset hunk"));
 
     toolbar.appendChild(closeBtn);
     toolbar.appendChild(stageBtn);

@@ -1,5 +1,6 @@
 import type { DataAdapter, Vault } from "obsidian";
 import { normalizePath, TFile, TFolder } from "obsidian";
+import { t } from "src/i18n";
 import type ObsidianGit from "../main";
 
 type BinaryData = ArrayBuffer | ArrayBufferView;
@@ -27,7 +28,7 @@ class FileNotFoundError extends Error {
     readonly code = "ENOENT";
 
     constructor(path: string) {
-        super(`File not found: ${path}`);
+        super(t("File not found: {path}", { path }));
         this.name = "FileNotFoundError";
     }
 }
@@ -265,12 +266,12 @@ export class MyAdapter {
     }
     readlink(path: string): Promise<never> {
         return Promise.reject(
-            new Error(`readlink of (${path}) is not implemented.`)
+            new Error(t("readlink of ({path}) is not implemented.", { path }))
         );
     }
     symlink(path: string): Promise<never> {
         return Promise.reject(
-            new Error(`symlink of (${path}) is not implemented.`)
+            new Error(t("symlink of ({path}) is not implemented.", { path }))
         );
     }
 

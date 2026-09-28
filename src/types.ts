@@ -1,4 +1,5 @@
 import type { LineAuthorSettings } from "src/editor/lineAuthor/model";
+import type { PluginLanguage } from "src/i18n";
 import type {
     Editor,
     EventRef,
@@ -11,6 +12,8 @@ import type {
 export type CommitMode = "smart" | "staged" | "all";
 
 export interface ObsidianGitSettings {
+    /** Interface language. Defaults to English; Chinese is optional. */
+    pluginLanguage: PluginLanguage;
     commitMessage: string;
     autoCommitMessage: string;
     commitMessageScript: string;

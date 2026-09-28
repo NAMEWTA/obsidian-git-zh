@@ -1,4 +1,5 @@
 import type ObsidianGit from "src/main";
+import { t } from "src/i18n";
 import type { Hunk } from "./hunks";
 import { MarkdownView, TFile } from "obsidian";
 
@@ -18,7 +19,7 @@ export class ChangesStatusBar {
             statusBarEl.addClass("git-changes-status-bar-colored");
         }
 
-        statusBarEl.setAttr("aria-label", "Git diff of the current editor");
+        statusBarEl.setAttr("aria-label", t("Git diff of the current editor"));
         this.statusBarEl.setAttribute("data-tooltip-position", "top");
         this.view =
             plugin.app.workspace.getActiveViewOfType(MarkdownView) ?? undefined;

@@ -10,6 +10,7 @@ import {
     type ViewUpdate,
 } from "@codemirror/view";
 import { ButtonComponent, editorLivePreviewField } from "obsidian";
+import { t } from "src/i18n";
 import { resolveAllConflicts, resolveConflict } from "./actions";
 import {
     parseConflictBlocks,
@@ -79,12 +80,12 @@ class ConflictButtonsWidget extends WidgetType {
             cls: "git-conflict-actions-group git-conflict-actions-widget",
         });
         const labels: Partial<Record<ConflictChoice, string>> = {
-            ours: "Keep ours",
-            theirs: "Keep theirs",
-            both: "Keep both",
+            ours: t("Keep ours"),
+            theirs: t("Keep theirs"),
+            both: t("Keep both"),
         };
         if (this.block.base !== undefined) {
-            labels.base = "Keep base";
+            labels.base = t("Keep base");
         }
         addButtons(root, labels, (choice) =>
             resolveConflict(view, this.block, choice)
@@ -196,17 +197,18 @@ class ConflictPanel implements Panel {
         }
         this.dom.createSpan({
             cls: "git-conflict-panel-label",
-            text: `${blocks.length} conflict${
-                blocks.length === 1 ? "" : "s"
-            } in file`,
+            text:
+                blocks.length === 1
+                    ? t("{count} conflict in file", { count: blocks.length })
+                    : t("{count} conflicts in file", { count: blocks.length }),
         });
         const labels: Partial<Record<ConflictChoice, string>> = {
-            ours: "Keep all ours",
-            theirs: "Keep all theirs",
-            both: "Keep both",
+            ours: t("Keep all ours"),
+            theirs: t("Keep all theirs"),
+            both: t("Keep both"),
         };
         if (blocks.every((block) => block.base !== undefined)) {
-            labels.base = "Keep all base";
+            labels.base = t("Keep all base");
         }
         addButtons(
             this.dom.createDiv({ cls: "git-conflict-actions-group" }),

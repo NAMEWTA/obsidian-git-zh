@@ -10,6 +10,7 @@ import {
 import type { ViewStateResult, WorkspaceLeaf } from "obsidian";
 import { ItemView } from "obsidian";
 import { READ_ONLY_FILE_VIEW_CONFIG } from "src/constants";
+import { t } from "src/i18n";
 import type ObsidianGit from "src/main";
 import type { ReadOnlyFileViewState } from "src/types";
 
@@ -54,9 +55,12 @@ export default class ReadOnlyFileView extends ItemView {
     }
 
     getDisplayText(): string {
-        if (!this.state) return READ_ONLY_FILE_VIEW_CONFIG.name;
+        if (!this.state) return t("File at commit");
         const fileName = this.state.file.split("/").last() ?? this.state.file;
-        return `${fileName} (${this.state.ref.substring(0, 7)})`;
+        return t("{file} ({ref})", {
+            file: fileName,
+            ref: this.state.ref.substring(0, 7),
+        });
     }
 
     getIcon(): string {

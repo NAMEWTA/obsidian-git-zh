@@ -1,6 +1,7 @@
 <script lang="ts">
     import { Menu, Platform, Scope, setIcon } from "obsidian";
     import { SOURCE_CONTROL_VIEW_CONFIG } from "src/constants";
+    import { t } from "src/i18n";
     import type ObsidianGit from "src/main";
     import type {
         CommitMode,
@@ -133,23 +134,49 @@
     function getCommitActionDescription(sync: boolean): string {
         const suffix = sync ? " and sync" : "";
         if (hasConflicts) {
-            return "Resolve conflicts before committing";
+            return t("Resolve conflicts before committing");
         }
         if (!hasChanges) {
             return sync
-                ? "Sync (no changes to commit)"
-                : "No changes to commit";
+                ? t("Sync (no changes to commit)")
+                : t("No changes to commit");
         }
         if (sync) {
-            return "Commit all changes and sync";
+            return t("Commit all changes and sync");
         }
         if (stagedCount > 0) {
-            return `Commit ${stagedCount} staged ${stagedCount === 1 ? "file" : "files"}${suffix}`;
+            if (stagedCount === 1) {
+                return suffix
+                    ? t("Commit {count} staged file and sync", {
+                          count: stagedCount,
+                      })
+                    : t("Commit {count} staged file", { count: stagedCount });
+            }
+            return suffix
+                ? t("Commit {count} staged files and sync", {
+                      count: stagedCount,
+                  })
+                : t("Commit {count} staged files", { count: stagedCount });
         }
         if (!plugin.settings.autoStageOnEmptyIndex) {
-            return "Nothing staged — stage changes before committing";
+            return t("Nothing staged — stage changes before committing");
         }
-        return `Stage and commit all ${changedCount} changed ${changedCount === 1 ? "file" : "files"}${suffix}`;
+        if (changedCount === 1) {
+            return suffix
+                ? t("Stage and commit all {count} changed file and sync", {
+                      count: changedCount,
+                  })
+                : t("Stage and commit all {count} changed file", {
+                      count: changedCount,
+                  });
+        }
+        return suffix
+            ? t("Stage and commit all {count} changed files and sync", {
+                  count: changedCount,
+              })
+            : t("Stage and commit all {count} changed files", {
+                  count: changedCount,
+              });
     }
 
     function canCommit(mode: CommitMode): boolean {
@@ -220,21 +247,21 @@
         const menu = Menu.forEvent(event);
         menu.addItem((item) =>
             item
-                .setTitle("Commit staged")
+                .setTitle(t("Commit staged"))
                 .setIcon("git-commit")
                 .setDisabled(!canCommit("staged"))
                 .onClick(() => commit("staged"))
         );
         menu.addItem((item) =>
             item
-                .setTitle("Stage all and commit")
+                .setTitle(t("Stage all and commit"))
                 .setIcon("list-plus")
                 .setDisabled(!canCommit("all"))
                 .onClick(() => commit("all"))
         );
         menu.addItem((item) =>
             item
-                .setTitle("Amend staged")
+                .setTitle(t("Amend staged"))
                 .setIcon("git-commit")
                 .setDisabled(!canCommit("staged"))
                 .onClick(amendStaged)
@@ -242,7 +269,7 @@
         menu.addSeparator();
         menu.addItem((item) =>
             item
-                .setTitle("Commit staged and sync")
+                .setTitle(t("Commit staged and sync"))
                 .setIcon("arrow-up-circle")
                 .setDisabled(!canCommit("staged"))
                 .onClick(() => commitAndSync("staged"))
@@ -419,7 +446,7 @@
                     id="commit-menu"
                     data-icon="chevron-down"
                     class="clickable-icon nav-action-button"
-                    aria-label="More commit actions"
+                    aria-label={t("More commit actions")}
                     bind:this={buttons[10]}
                     onclick={showCommitMenu}
                 ></div>
@@ -428,7 +455,7 @@
                 id="stage-all"
                 class="clickable-icon nav-action-button"
                 data-icon="plus-circle"
-                aria-label="Stage all"
+                aria-label={t("Stage all")}
                 bind:this={buttons[2]}
                 onclick={stageAll}
             ></div>
@@ -436,7 +463,7 @@
                 id="unstage-all"
                 class="clickable-icon nav-action-button"
                 data-icon="minus-circle"
-                aria-label="Unstage all"
+                aria-label={t("Unstage all")}
                 bind:this={buttons[3]}
                 onclick={unstageAll}
             ></div>
@@ -444,7 +471,7 @@
                 id="push"
                 class="clickable-icon nav-action-button"
                 data-icon="upload"
-                aria-label="Push"
+                aria-label={t("Push")}
                 bind:this={buttons[4]}
                 onclick={push}
             ></div>
@@ -452,14 +479,14 @@
                 id="pull"
                 class="clickable-icon nav-action-button"
                 data-icon="download"
-                aria-label="Pull"
+                aria-label={t("Pull")}
                 bind:this={buttons[5]}
                 onclick={pull}
             ></div>
             <div
                 id="layoutChange"
                 class="clickable-icon nav-action-button"
-                aria-label="Change Layout"
+                aria-label={t("Change Layout")}
                 data-icon={showTree ? "list" : "folder"}
                 bind:this={buttons[6]}
                 onclick={() => {
@@ -474,7 +501,7 @@
                 class="clickable-icon nav-action-button"
                 class:loading
                 data-icon="refresh-cw"
-                aria-label="Refresh"
+                aria-label={t("Refresh")}
                 bind:this={buttons[7]}
                 onclick={triggerRefresh}
             ></div>
@@ -483,7 +510,7 @@
                     id="merge-status"
                     class="clickable-icon nav-action-button merge-status"
                     data-icon="git-merge"
-                    aria-label="Merge in progress — select for help"
+                    aria-label={t("Merge in progress — select for help")}
                     bind:this={buttons[11]}
                     onclick={() => plugin.openMergeConflictHelp()}
                 ></div>
@@ -495,13 +522,13 @@
             {rows}
             class="commit-msg-input"
             spellcheck="true"
-            placeholder="Commit Message"
+            placeholder={t("Commit Message")}
             bind:value={commitMessage}></textarea>
         {#if commitMessage}
             <div
                 class="git-commit-msg-clear-button"
                 onclick={() => (commitMessage = "")}
-                aria-label={"Clear"}
+                aria-label={t("Clear")}
             ></div>
         {/if}
     </div>
@@ -535,7 +562,7 @@
                         >
                     </div>
                     <div class="tree-item-inner nav-folder-title-content">
-                        Conflicts
+                        {t("Conflicts")}
                     </div>
                     <div class="git-tools">
                         <div class="files-count">
@@ -602,14 +629,14 @@
                             >
                         </div>
                         <div class="tree-item-inner nav-folder-title-content">
-                            Staged Changes
+                            {t("Staged Changes")}
                         </div>
 
                         <div class="git-tools">
                             <div class="buttons">
                                 <div
                                     data-icon="minus"
-                                    aria-label="Unstage"
+                                    aria-label={t("Unstage")}
                                     bind:this={buttons[8]}
                                     onclick={unstageAll}
                                     class="clickable-icon"
@@ -693,13 +720,13 @@
                         </div>
 
                         <div class="tree-item-inner nav-folder-title-content">
-                            Changes
+                            {t("Changes")}
                         </div>
                         <div class="git-tools">
                             <div class="buttons">
                                 <div
                                     data-icon="undo"
-                                    aria-label="Discard"
+                                    aria-label={t("Discard")}
                                     onclick={discard}
                                     class="clickable-icon"
                                 >
@@ -721,7 +748,7 @@
                                 </div>
                                 <div
                                     data-icon="plus"
-                                    aria-label="Stage"
+                                    aria-label={t("Stage")}
                                     bind:this={buttons[9]}
                                     onclick={stageAll}
                                     class="clickable-icon"
@@ -814,7 +841,7 @@
                             <div
                                 class="tree-item-inner nav-folder-title-content"
                             >
-                                Recently Pulled Files
+                                {t("Recently Pulled Files")}
                             </div>
 
                             <span class="tree-item-flair"

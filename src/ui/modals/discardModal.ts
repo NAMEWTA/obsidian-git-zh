@@ -1,5 +1,6 @@
 import type { App } from "obsidian";
 import { Modal } from "obsidian";
+import { t } from "src/i18n";
 import { plural } from "src/utils";
 
 export type DiscardResult = false | "delete" | "discard";
@@ -42,37 +43,55 @@ export class DiscardModal extends Modal {
     onOpen() {
         const sum = this.deleteCount + this.discardCount;
         const { contentEl, titleEl } = this;
-        let titlePart = "";
         if (this.path != "") {
             if (sum > 1) {
-                titlePart = `files in "${this.path}"`;
+                titleEl.setText(
+                    this.discardCount == 0
+                        ? t('Delete files in "{path}"', { path: this.path })
+                        : t('Discard files in "{path}"', { path: this.path })
+                );
             } else {
-                titlePart = `"${this.path}"`;
+                titleEl.setText(
+                    this.discardCount == 0
+                        ? t('Delete "{path}"', { path: this.path })
+                        : t('Discard "{path}"', { path: this.path })
+                );
             }
+        } else {
+            titleEl.setText(
+                `${this.discardCount == 0 ? t("Delete") : t("Discard")} `
+            );
         }
-        titleEl.setText(
-            `${this.discardCount == 0 ? "Delete" : "Discard"} ${titlePart}`
-        );
         if (this.deleteCount > 0) {
             contentEl
                 .createEl("p")
                 .setText(
-                    `Are you sure you want to DELETE the ${plural(this.deleteCount, "untracked file")}? They are deleted according to your Obsidian trash settting.`
+                    t(
+                        "Are you sure you want to DELETE the {files}? They are deleted according to your Obsidian trash settting.",
+                        { files: plural(this.deleteCount, "untracked file") }
+                    )
                 );
         }
         if (this.discardCount > 0) {
-            contentEl
-                .createEl("p")
-                .setText(
-                    `Are you sure you want to discard ALL changes in ${plural(this.discardCount, "tracked file")}?`
-                );
+            contentEl.createEl("p").setText(
+                t("Are you sure you want to discard ALL changes in {files}?", {
+                    files: plural(this.discardCount, "tracked file"),
+                })
+            );
         }
         const div = contentEl.createDiv({ cls: "modal-button-container" });
 
         if (this.deleteCount > 0) {
             const discardAndDelete = div.createEl("button", {
                 cls: "mod-warning",
-                text: `${this.discardCount > 0 ? "Discard" : "Delete"} all ${plural(sum, "file")}`,
+                text:
+                    this.discardCount > 0
+                        ? t("Discard all {files}", {
+                              files: plural(sum, "file"),
+                          })
+                        : t("Delete all {files}", {
+                              files: plural(sum, "file"),
+                          }),
             });
             discardAndDelete.addEventListener("click", () => {
                 if (this.resolve) this.resolve("delete");
@@ -87,7 +106,9 @@ export class DiscardModal extends Modal {
         if (this.discardCount > 0) {
             const discard = div.createEl("button", {
                 cls: "mod-warning",
-                text: `Discard all ${plural(this.discardCount, "tracked file")}`,
+                text: t("Discard all {files}", {
+                    files: plural(this.discardCount, "tracked file"),
+                }),
             });
             discard.addEventListener("click", () => {
                 if (this.resolve) this.resolve("discard");
@@ -100,7 +121,7 @@ export class DiscardModal extends Modal {
         }
 
         const close = div.createEl("button", {
-            text: "Cancel",
+            text: t("Cancel"),
         });
         close.addEventListener("click", () => {
             if (this.resolve) this.resolve(false);
